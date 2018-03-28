@@ -1,5 +1,6 @@
 import Animation from '../base/animation'
 import DataBus   from '../databus'
+import Music     from '../runtime/music'
 
 const ENEMY_IMG_SRC = 'images/enemy.png'
 const ENEMY_WIDTH   = 60
@@ -11,19 +12,22 @@ const __ = {
 
 let databus = new DataBus()
 
-function rnd(start, end){
-  return Math.floor(Math.random() * (end - start) + start)
-}
 
 export default class Enemy extends Animation {
   constructor() {
     super(ENEMY_IMG_SRC, ENEMY_WIDTH, ENEMY_HEIGHT)
 
+    this.music = new Music();
+
     this.initExplosionAnimation()
   }
 
+  rnd(start, end){
+    return Math.floor(Math.random() * (end - start) + start)
+  }
+
   init(speed) {
-    this.x = rnd(0, window.innerWidth - ENEMY_WIDTH)
+    this.x = this.rnd(0, window.innerWidth - ENEMY_WIDTH) // 随机x位置
     this.y = -this.height
 
     this[__.speed] = speed
@@ -45,12 +49,19 @@ export default class Enemy extends Animation {
     this.initFrames(frames)
   }
 
-  // 每一帧更新子弹位置
+  // 每一帧更新敌机位置
   update() {
     this.y += this[__.speed]
 
     // 对象回收
     if ( this.y > window.innerHeight + this.height )
       databus.removeEnemey(this)
+  }
+
+  attacked() {
+    this.playAnimation()
+    this.music.playExplosion()
+
+    databus.score += 1
   }
 }

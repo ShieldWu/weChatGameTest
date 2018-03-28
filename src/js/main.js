@@ -1,5 +1,6 @@
 import Player from './player/index'
 import Enemy from './npc/enemy'
+import HardEnemy from './npc/hardenemy'
 import BackGround from './runtime/background'
 import GameInfo from './runtime/gameinfo'
 import Music from './runtime/music'
@@ -50,7 +51,15 @@ export default class Main {
    */
   enemyGenerate() {
     if (databus.frame % 30 === 0) {
-      let enemy = databus.pool.getItemByClass('enemy', Enemy)
+      let enemyPoolKey = 'enemy';
+      let enemyObj = Enemy;
+
+      if(databus.frame > 300) {
+        enemyPoolKey = 'hardenemy';
+        enemyObj = HardEnemy;
+      }
+
+      let enemy = databus.pool.getItemByClass(enemyPoolKey, enemyObj);
       enemy.init(6)
       databus.enemys.push(enemy)
     }
@@ -65,11 +74,8 @@ export default class Main {
         let enemy = databus.enemys[i]
 
         if (!enemy.isPlaying && enemy.isCollideWith(bullet)) {
-          enemy.playAnimation()
-          that.music.playExplosion()
-
+          enemy.attacked();
           bullet.visible = false
-          databus.score += 1
 
           break
         }
@@ -147,13 +153,13 @@ export default class Main {
 
     this.bg.update()
 
-    databus.bullets
-      .concat(databus.enemys)
+    databus.bullets // 子弹
+      .concat(databus.enemys) // 敌机
       .forEach((item) => {
-        item.update()
+        item.update() // 更新位置
       })
 
-    this.enemyGenerate()
+    this.enemyGenerate() // 每30帧生成一架敌机
 
     this.collisionDetection()
 
@@ -165,12 +171,12 @@ export default class Main {
 
   // 实现游戏帧循环
   loop() {
-    databus.frame++
+    databus.frame++ // 帧数+1
 
-    this.update()
-    this.render()
+    this.update() //计算各元素位置
+    this.render() //重绘
 
-    this.aniId = window.requestAnimationFrame(
+    this.aniId = window.requestAnimationFrame( // 每帧结束自动开始下一帧
       this.bindLoop,
       canvas
     )

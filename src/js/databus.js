@@ -18,10 +18,10 @@ export default class DataBus {
   }
 
   reset() {
-    this.frame      = 0
-    this.score      = 0
+    this.frame      = 0 // 第多少帧
+    this.score      = 0 // 得分
     this.bullets    = []
-    this.enemys     = []
+    this.enemys     = [] // 敌机
     this.animations = []
     this.gameOver   = false
   }
