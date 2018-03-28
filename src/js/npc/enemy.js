@@ -18,6 +18,7 @@ export default class Enemy extends Animation {
     super(ENEMY_IMG_SRC, ENEMY_WIDTH, ENEMY_HEIGHT)
 
     this.music = new Music();
+    this.lifes = 1;
 
     this.initExplosionAnimation()
   }
@@ -58,10 +59,18 @@ export default class Enemy extends Animation {
       databus.removeEnemey(this)
   }
 
-  attacked() {
-    this.playAnimation()
-    this.music.playExplosion()
+  getScore() {
+    return 1;
+  }
 
-    databus.score += 1
+  attacked() {
+    this.lifes = this.lifes - 1;
+
+    if(this.lifes <= 0) {
+      this.playAnimation()
+      this.music.playExplosion()
+
+      databus.score += this.getScore()
+    }
   }
 }

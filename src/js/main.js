@@ -53,14 +53,16 @@ export default class Main {
     if (databus.frame % 30 === 0) {
       let enemyPoolKey = 'enemy';
       let enemyObj = Enemy;
+      let speed = 6;
 
       if(databus.frame > 300) {
         enemyPoolKey = 'hardenemy';
         enemyObj = HardEnemy;
+        speed = 5;
       }
 
       let enemy = databus.pool.getItemByClass(enemyPoolKey, enemyObj);
-      enemy.init(6)
+      enemy.init(speed)
       databus.enemys.push(enemy)
     }
   }

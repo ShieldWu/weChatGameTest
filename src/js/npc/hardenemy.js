@@ -16,6 +16,7 @@ export default class HardEnemy extends Enemy {
     super()
 
     this.lifes = 2;
+    this.startFrame = databus.frame;
     this.music = new Music();
   }
 
@@ -28,23 +29,19 @@ export default class HardEnemy extends Enemy {
     this.visible = true
   }
 
-  // 每一帧更新敌机位置
   update() {
-    this.y += this[__.speed]
+    let frameNumDiff = databus.frame - this.startFrame;
+
+    if(frameNumDiff < 30 || frameNumDiff > 100) {
+      this.y += this[__.speed]
+    }
 
     // 对象回收
     if ( this.y > window.innerHeight + this.height )
       databus.removeEnemey(this)
   }
 
-  attacked() {
-    this.lifes = this.lifes - 1;
-console.log('----1----', this.lifes);
-    if(this.lifes <= 0) {
-      this.playAnimation()
-      this.music.playExplosion()
-
-      databus.score += 2
-    }
+  getScore() {
+    return 2;
   }
 }
